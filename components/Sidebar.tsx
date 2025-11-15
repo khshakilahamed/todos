@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CheckSquare2, User, LogOut, X } from 'lucide-react'
+import { CheckSquare2, User, LogOut, X, Home } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
@@ -16,12 +15,13 @@ export function Sidebar({ onClose }: SidebarProps) {
   const pathname = usePathname()
 
   const navItems = [
+    { label: 'Dashboard', href: '/dashboard', icon: Home },
     { label: 'Todos', href: '/dashboard/todos', icon: CheckSquare2 },
     { label: 'Account Information', href: '/dashboard/account', icon: User },
   ]
 
   return (
-    <div className="w-80 md:w-64 lg:w-80 bg-[#0D224A] text-white flex flex-col h-screen">
+    <div className="w-56 sm:w-80 md:w-64 lg:w-80 bg-[#0D224A] text-white flex flex-col h-screen">
       {/* Header with close button for mobile */}
       <div className="flex items-center justify-between p-4 md:hidden">
         <h1 className="font-bold text-lg">Menu</h1>
@@ -46,7 +46,7 @@ export function Sidebar({ onClose }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-2 md:px-4 py-4 md:py-6 space-y-2">
+      <nav className="flex-1 py-4 md:py-6 space-y-2">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
@@ -56,13 +56,13 @@ export function Sidebar({ onClose }: SidebarProps) {
               href={item.href}
               onClick={onClose}
               className={cn(
-                'flex items-center gap-3 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-colors',
+                'flex items-center gap-3 px-5 md:px-8 py-2 md:py-3 transition-colors',
                 isActive
-                  ? 'bg-slate-700 text-white'
+                  ? 'bg-linear-to-br from-blue-900 to-slate-[#0D224A] text-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800'
               )}
             >
-              <Icon className="w-5 h-5 shrink-0" />
+              <Icon className="w-6 h-6 shrink-0" />
               <span className="text-sm md:text-base">{item.label}</span>
             </Link>
           )
@@ -70,10 +70,10 @@ export function Sidebar({ onClose }: SidebarProps) {
       </nav>
 
       {/* Logout */}
-      <div className="border-t border-slate-800 p-2 md:p-4">
+      <div className=" border-slate-800 mb-4">
         <Button
           variant="ghost"
-          className="w-full flex items-center gap-3 text-slate-400 hover:text-white justify-start text-sm md:text-base"
+          className="w-full flex items-center justify-start gap-3 text-slate-400 hover:text-white hover:bg-slate-800 text-sm md:text-base rounded-none cursor-pointer"
         >
           <LogOut className="w-5 h-5 shrink-0" />
           <span>Logout</span> 
