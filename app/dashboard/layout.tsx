@@ -1,8 +1,6 @@
 'use client'
 
 import { ReactNode, useState } from 'react'
-import { Menu, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Sidebar } from '@/components/Sidebar'
 import { DashboardHeader } from '@/components/DashboardHeader'
 
@@ -42,7 +40,7 @@ export default function DashboardLayout({
         />
 
         {/* Page Content */}
-        <main className="flex-1 overflow-auto bg-slate-50">
+        <main className="flex-1 overflow-auto bg-[#EEF7FF] p-4 md:p-10">
           {children}
         </main>
       </div>

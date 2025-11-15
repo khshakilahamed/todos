@@ -21,7 +21,7 @@ export function Sidebar({ onClose }: SidebarProps) {
   ]
 
   return (
-    <div className="w-80 md:w-64 lg:w-80 bg-slate-900 text-white flex flex-col h-screen">
+    <div className="w-80 md:w-64 lg:w-80 bg-[#0D224A] text-white flex flex-col h-screen">
       {/* Header with close button for mobile */}
       <div className="flex items-center justify-between p-4 md:hidden">
         <h1 className="font-bold text-lg">Menu</h1>
@@ -75,8 +75,8 @@ export function Sidebar({ onClose }: SidebarProps) {
           variant="ghost"
           className="w-full flex items-center gap-3 text-slate-400 hover:text-white justify-start text-sm md:text-base"
         >
-          <LogOut className="w-5 h-5 flex-shrink-0" />
-          <span>Logout</span>
+          <LogOut className="w-5 h-5 shrink-0" />
+          <span>Logout</span> 
         </Button>
       </div>
     </div>
