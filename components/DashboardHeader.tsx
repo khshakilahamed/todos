@@ -15,6 +15,7 @@ export function DashboardHeader({
   onMenuClick,
   isMobileMenuOpen,
 }: DashboardHeaderProps) {
+
   const today = new Date();
   const dayName = format(today, "EEEE");
   const date = format(today, "dd/MM/yyyy");
@@ -55,9 +56,7 @@ export function DashboardHeader({
         </Button>
         {/* Date - Hidden on small mobile */}
         <div className="hidden sm:block font-semibold">
-          <div className="text-xs md:text-sm text-slate-900">
-            {dayName}
-          </div>
+          <div className="text-xs md:text-sm text-slate-900">{dayName}</div>
           <div className="text-sm">{date}</div>
         </div>
       </div>

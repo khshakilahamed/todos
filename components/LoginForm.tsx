@@ -1,12 +1,12 @@
-'use client'
+"use client";
 
-import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import Link from 'next/link'
-import { Eye, EyeOff } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Checkbox } from '@/components/ui/checkbox'
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -14,39 +14,50 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from "@/components/ui/form";
+import axiosInstance from "@/lib/axios";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
 
 interface LoginFormData {
-  email: string
-  password: string
-  remember?: boolean
+  email: string;
+  password: string;
+  remember?: boolean;
 }
 
 export default function LoginForm() {
-  const form = useForm<LoginFormData>({
-    mode: 'onBlur',
-    defaultValues: {
-      email: '',
-      password: '',
-      remember: false,
-    }
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const { storeData } = useAuth();
+  const router = useRouter();
 
-  const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true)
+  const form = useForm<LoginFormData>({
+    mode: "onBlur",
+    defaultValues: {
+      email: "",
+      password: "",
+      remember: false,
+    },
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onSubmit = async (payload: LoginFormData) => {
+    setIsLoading(true);
     try {
-      console.log('Login data:', data)
-      // API call would go here
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      alert('Login successful!')
+      const result = await axiosInstance.post("/auth/login/", payload);
+
+      const refresh = result?.data?.refresh;
+      const access = result?.data?.access;
+
+      storeData(refresh, access);
+      toast.success("Login successful!");
+      router.push("/dashboard");
     } catch (error) {
-      console.error('Login error:', error)
+      console.error("Login error:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Form {...form}>
@@ -59,21 +70,17 @@ export default function LoginForm() {
             <FormItem>
               <FormLabel className="text-slate-900">Email</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter your email"
-                  type="email"
-                  {...field}
-                />
+                <Input placeholder="Enter your email" type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
           rules={{
-            required: 'Email is required',
+            required: "Email is required",
             pattern: {
               value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: 'Please enter a valid email'
-            }
+              message: "Please enter a valid email",
+            },
           }}
         />
 
@@ -88,7 +95,7 @@ export default function LoginForm() {
                 <div className="relative">
                   <Input
                     placeholder="Enter your password"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     {...field}
                   />
                   <button
@@ -96,11 +103,7 @@ export default function LoginForm() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   >
-                    {showPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
               </FormControl>
@@ -108,11 +111,11 @@ export default function LoginForm() {
             </FormItem>
           )}
           rules={{
-            required: 'Password is required',
+            required: "Password is required",
             minLength: {
               value: 4,
-              message: 'Password must be at least 4 characters'
-            }
+              message: "Password must be at least 4 characters",
+            },
           }}
         />
 
@@ -135,7 +138,10 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
-          <Link href="#" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+          <Link
+            href="#"
+            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+          >
             Forgot your password?
           </Link>
         </div>
@@ -147,17 +153,20 @@ export default function LoginForm() {
           className="w-full bg-blue-600 hover:bg-blue-700 text-white"
           size="lg"
         >
-          {isLoading ? 'Logging in...' : 'Log In'}
+          {isLoading ? "Logging in..." : "Log In"}
         </Button>
 
         {/* Sign Up Link */}
         <p className="text-center text-sm text-slate-600">
-          Don't have an account?{' '}
-          <Link href="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+          Don't have an account?{" "}
+          <Link
+            href="/register"
+            className="text-blue-600 hover:text-blue-700 font-medium"
+          >
             Register now
           </Link>
         </p>
       </form>
     </Form>
-  )
+  );
 }
