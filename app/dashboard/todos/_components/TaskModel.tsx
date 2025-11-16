@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { Trash2 } from "lucide-react";
+import { Trash2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -18,39 +18,41 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "./ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
+import { TTask } from "@/types";
 
-interface AddTaskModalProps {
+interface TaskModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddTask: (task: any) => void;
+  initialData?: TTask;
+  mode?: "add" | "edit";
+  onSubmitTask: (task: TTask) => void;
 }
 
-export function AddTaskModal({
+export function TaskModal({
   open,
   onOpenChange,
-  onAddTask,
-}: AddTaskModalProps) {
-  const form = useForm({
-    defaultValues: {
+  initialData,
+  mode = "add",
+  onSubmitTask,
+}: TaskModalProps) {
+  const form = useForm<TTask>({
+    defaultValues: initialData || {
       title: "",
-      date: "",
-      priority: "Moderate",
+      todo_date: "",
+      priority: "moderate",
       description: "",
     },
   });
 
-  const onSubmit = (data: any) => {
-    const newTask = {
-      id: Date.now().toString(),
-      title: data.title,
-      description: data.description,
-      priority: data.priority,
-      dueDate: data.date || "No due date",
+  const handleSubmit = (data: TTask) => {
+    const task = {
+      ...data,
+      id: initialData?.id,
+      todo_date: data.todo_date || "No due date",
     };
-    onAddTask(newTask);
+    onSubmitTask(task);
     form.reset();
     onOpenChange(false);
   };
@@ -63,8 +65,8 @@ export function AddTaskModal({
       >
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle className="text-xl text-slate-900">
-            <h2>Add New Task</h2>
-            <div className="border-b-2 border-blue-600 w-16"></div>
+            {mode === "add" ? "Add New Task" : "Update Task"}
+            <div className="border-b-2 border-blue-600 w-16 mt-1"></div>
           </DialogTitle>
           <Button
             variant="link"
@@ -77,7 +79,7 @@ export function AddTaskModal({
 
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-4 pt-4"
           >
             {/* Title */}
@@ -103,7 +105,7 @@ export function AddTaskModal({
             {/* Date */}
             <FormField
               control={form.control}
-              name="date"
+              name="todo_date"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-slate-900 font-semibold text-sm">
@@ -113,6 +115,7 @@ export function AddTaskModal({
                     <Input
                       type="date"
                       {...field}
+                      value={field.value ?? ""}
                       className="bg-white border-gray-400 h-10"
                     />
                   </FormControl>
@@ -129,55 +132,31 @@ export function AddTaskModal({
                   <FormLabel className="text-slate-900 font-semibold text-sm mb-3">
                     Priority
                   </FormLabel>
-
                   <div className="flex items-center gap-6">
-                    {/* Extreme */}
-                    <div className="flex items-center gap-2">
-                      <Label
-                        htmlFor="extreme"
-                        className="flex items-center gap-2 cursor-pointer text-sm text-slate-600"
-                      >
-                        <span className="w-2 h-2 bg-red-500 rounded-full" />
-                        Extreme
-                      </Label>
-                      <Checkbox
-                        checked={field.value === "Extreme"}
-                        onCheckedChange={() => field.onChange("Extreme")}
-                        id="extreme"
-                      />
-                    </div>
-
-                    {/* Moderate */}
-                    <div className="flex items-center gap-2">
-                      <Label
-                        htmlFor="moderate"
-                        className="flex items-center gap-2 cursor-pointer text-sm text-slate-600"
-                      >
-                        <span className="w-2 h-2 bg-green-500 rounded-full" />
-                        Moderate
-                      </Label>
-                      <Checkbox
-                        checked={field.value === "Moderate"}
-                        onCheckedChange={() => field.onChange("Moderate")}
-                        id="moderate"
-                      />
-                    </div>
-
-                    {/* Low */}
-                    <div className="flex items-center gap-2">
-                      <Label
-                        htmlFor="low"
-                        className="flex items-center gap-2 cursor-pointer text-sm text-slate-600"
-                      >
-                        <span className="w-2 h-2 bg-yellow-500 rounded-full" />
-                        Low
-                      </Label>
-                      <Checkbox
-                        checked={field.value === "Low"}
-                        onCheckedChange={() => field.onChange("Low")}
-                        id="low"
-                      />
-                    </div>
+                    {["Extreme", "Moderate", "Low"].map((level) => (
+                      <div key={level} className="flex items-center gap-2">
+                        <Label
+                          htmlFor={level.toLowerCase()}
+                          className="flex items-center gap-2 cursor-pointer text-sm text-slate-600"
+                        >
+                          <span
+                            className={`w-2 h-2 rounded-full ${
+                              level === "Extreme"
+                                ? "bg-red-500"
+                                : level === "Moderate"
+                                ? "bg-green-500"
+                                : "bg-yellow-500"
+                            }`}
+                          />
+                          {level}
+                        </Label>
+                        <Checkbox
+                          id={level.toLowerCase()}
+                          checked={field.value === level}
+                          onCheckedChange={() => field.onChange(level)}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </FormItem>
               )}
@@ -205,8 +184,8 @@ export function AddTaskModal({
 
             {/* Buttons */}
             <div className="flex items-center justify-between gap-3 pt-4">
-              <Button type="submit" className="">
-                Done
+              <Button type="submit">
+                {mode === "add" ? "Add Task" : "Update Task"}
               </Button>
               <Button
                 type="button"
