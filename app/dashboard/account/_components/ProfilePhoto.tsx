@@ -8,8 +8,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { FormEvent, useRef, useState } from "react";
-import ProfilePhotoSkeleton from "./ProfilePhotoSkeleton";
 import axiosInstance from "@/lib/axios";
+import ProfilePhotoSkeleton from "./ProfilePhotoSkeleton";
 
 const ProfilePhoto = () => {
   const { user, isLoading, refetchUserInfo } = useAuth();

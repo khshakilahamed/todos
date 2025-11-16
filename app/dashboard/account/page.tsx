@@ -1,6 +1,7 @@
-import ProfilePhoto from "@/components/ProfilePhoto";
+
 import { Card, CardContent } from "@/components/ui/card";
-import UpdateProfileForm from "@/components/UpdateProfileForm";
+import UpdateProfileForm from "@/app/dashboard/account/_components/UpdateProfileForm";
+import ProfilePhoto from "./_components/ProfilePhoto";
 
 export default function AccountPage() {
   return (

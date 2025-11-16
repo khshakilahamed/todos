@@ -29,7 +29,7 @@ export type TTask = {
   description: string;
   is_completed?: boolean;
   priority?: string;
-  position?: TPriority;
+  position?: number;
   todo_date?: string | null;
   created_at?: Date;
   updated_at?: Date;

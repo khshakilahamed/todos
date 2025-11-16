@@ -56,7 +56,7 @@ export function useUpdateTask() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, ...task }: TTask & { id?: number }) => {
+    mutationFn: async ({ id, ...task }: Partial<TTask> & { id?: number }) => {
       const { data } = await axiosInstance.patch(`/todos/${id}/`, task);
       return data;
     },

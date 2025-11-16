@@ -40,8 +40,8 @@ export function Sidebar({ onClose }: SidebarProps) {
       <div className="p-4 md:p-6">
         <div className="flex flex-col items-center text-center">
           <Avatar className="w-20 md:w-24 h-20 md:h-24 mb-4">
-            <AvatarImage src={user?.profile_image} alt="User avatar" />
-            <AvatarFallback>AM</AvatarFallback>
+            <AvatarImage src={user?.profile_image} alt="User avatar" className=""/>
+            <AvatarFallback className="bg-slate-700">AM</AvatarFallback>
           </Avatar>
           {!isLoading ? (
             <>

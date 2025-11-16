@@ -3,29 +3,34 @@
 import { Trash2, Edit2, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cardDateFormat, cn } from "@/lib/utils";
 import { PRIORITY, TPriority, TTask } from "@/types";
 import { useState } from "react";
 import { DeleteTaskDialog } from "./DeleteTaskDialog";
 import { useUpdateTask } from "@/hooks/useTask";
 import { TaskModal } from "./TaskModel";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface TaskCardProps {
   task: TTask;
 }
 
-const priorityConfig: Record<TPriority, { bg: string; badge: string }> = {
+const priorityConfig: Record<TPriority, { bg: string; badge: string, border: string; }> = {
   extreme: {
     bg: "bg-red-100",
     badge: "bg-red-100 text-red-700 hover:bg-red-100",
+    border: "border-red-100",
   },
   moderate: {
     bg: "bg-green-100",
     badge: "bg-green-100 text-green-700 hover:bg-green-100",
+    border: "border-green-100",
   },
   low: {
     bg: "bg-yellow-100",
     badge: "bg-yellow-100 text-yellow-700 hover:bg-yellow-100",
+    border: "border-yellow-100",
   },
 };
 
@@ -53,29 +58,59 @@ export function TaskCard({ task }: TaskCardProps) {
     }
   };
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id! });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
   // const config = priorityConfig[task?.priority ?? "moderate"];
   const config =
     priorityConfig[(task.priority ?? PRIORITY.MODERATE) as TPriority];
 
   return (
-    <div className="bg-white rounded-lg border p-6 hover:shadow-lg transition-all duration-200">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        `bg-white rounded-lg border p-6 hover:shadow-lg transition-all duration-200 ${config?.border}`,
+        isDragging && "shadow-lg ring-2 ring-blue-500"
+      )}
+    >
       {/* Header */}
       <div className="flex flex-wrap justify-between mb-4">
-        <h3 className="text-lg font-semibold text-slate-900 flex-1 pr-4">
+        <h3 className="text-lg font-semibold text-slate-900 flex-1 pr-4 capitalize">
           {task.title}
         </h3>
         <div className="flex items-center gap-1">
           <Badge
             variant="outline"
             className={cn(
-              "whitespace-nowrap rounded-sm px-3 py-1",
+              "whitespace-nowrap rounded-sm px-3 py-1 capitalize",
               config?.badge
             )}
           >
             {task.priority}
           </Badge>
 
-          <GripVertical className="text-gray-400" />
+          {/* <GripVertical className="text-gray-400" /> */}
+          <button
+            className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+            title="Drag to reorder"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="w-5 h-5 cursor-grab active:cursor-grabbing" />
+          </button>
         </div>
       </div>
 
@@ -86,7 +121,8 @@ export function TaskCard({ task }: TaskCardProps) {
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-4">
-        <p className="text-slate-500">Due {task.todo_date}</p>
+        {/* <p className="text-slate-500">{task.todo_date ? `Due ${task.todo_date}` : ""}</p> */}
+        <p className="text-slate-500">{task.todo_date ? `Due ${cardDateFormat(task.todo_date)}` : ""}</p>
         <div className="flex gap-2">
           <Button
             variant="ghost"

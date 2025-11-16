@@ -21,7 +21,7 @@ export function DashboardHeader({
   const date = format(today, "dd/MM/yyyy");
 
   return (
-    <div className="bg-white px-4 md:px-10 py-3 md:py-4 flex items-center justify-between">
+    <div className="bg-white px-4 md:px-10 py-3 md:py-4 flex items-center justify-between border-b">
       <div className="flex items-center gap-2 md:gap-4">
         {/* Mobile Menu Button */}
         <Button
