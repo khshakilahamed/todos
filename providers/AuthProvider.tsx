@@ -53,6 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     localStorage.setItem("accessToken", refreshToken);
     localStorage.setItem("refreshToken", refreshToken);
+
+    fetchProfile()
   };
 
   const refetchUserInfo = (userInfo?: TUser) => {

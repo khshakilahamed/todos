@@ -24,7 +24,7 @@ export function Sidebar({ onClose }: SidebarProps) {
   const { isLoading, user, logout } = useAuth();
 
   return (
-    <div className="w-56 sm:w-80 md:w-64 lg:w-80 bg-[#0D224A] text-white flex flex-col h-screen py-5">
+    <div className="w-56 sm:w-80 md:w-64 lg:w-80 bg-[#0D224A] text-white flex flex-col h-screen py-5 overflow-y-auto">
       {/* Header with close button for mobile */}
       <div className="flex items-center justify-between p-4 md:hidden">
         <h1 className="font-bold text-lg">Menu</h1>

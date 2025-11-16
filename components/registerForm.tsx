@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import Link from 'next/link'
-import { Eye, EyeOff } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -13,45 +13,56 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
+} from "@/components/ui/form";
+import axiosInstance from "@/lib/axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface RegisterFormData {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  confirmPassword: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
 }
 
 export default function RegisterForm() {
+  const router = useRouter();
   const form = useForm<RegisterFormData>({
-    mode: 'onBlur',
+    mode: "onBlur",
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-    }
-  })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const password = form.watch('password')
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const password = form.watch("password");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const onSubmit = async (data: RegisterFormData) => {
-    setIsLoading(true)
+  const onSubmit = async (payload: RegisterFormData) => {
+    setErrorMessage("");
+    setIsLoading(true);
     try {
-      console.log('Registration data:', data)
-      // API call would go here
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      alert('Registration successful!')
-    } catch (error) {
-      console.error('Registration error:', error)
+      console.log("Registration data:", payload);
+      const result = await axiosInstance.post("/users/signup/", payload);
+
+      console.log("Registration success data: ", result);
+
+      toast.success("Registration successful!");
+      form.reset();
+      router.push("/login");
+    } catch (error: any) {
+      console.error("Registration error:", error);
+      setErrorMessage(error?.message ?? "");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Form {...form}>
@@ -65,20 +76,17 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel className="text-slate-900">First Name</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="name.Platform"
-                    {...field}
-                  />
+                  <Input placeholder="First Name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
             rules={{
-              required: 'First name is required',
+              required: "First name is required",
               pattern: {
                 value: /^[a-zA-Z\s]*$/,
-                message: 'Please enter a valid name format.'
-              }
+                message: "Please enter a valid name format.",
+              },
             }}
           />
 
@@ -89,20 +97,17 @@ export default function RegisterForm() {
               <FormItem>
                 <FormLabel className="text-slate-900">Last Name</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="name.Platform"
-                    {...field}
-                  />
+                  <Input placeholder="Last Name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
             rules={{
-              required: 'Last name is required',
+              required: "Last name is required",
               pattern: {
                 value: /^[a-zA-Z\s]*$/,
-                message: 'Please enter a valid name format.'
-              }
+                message: "Please enter a valid name format.",
+              },
             }}
           />
         </div>
@@ -115,21 +120,17 @@ export default function RegisterForm() {
             <FormItem>
               <FormLabel className="text-slate-900">Email</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter your email"
-                  type="email"
-                  {...field}
-                />
+                <Input placeholder="Enter your email" type="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
           rules={{
-            required: 'Email is required',
+            required: "Email is required",
             pattern: {
               value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-              message: 'Please enter a valid email'
-            }
+              message: "Please enter a valid email",
+            },
           }}
         />
 
@@ -144,7 +145,7 @@ export default function RegisterForm() {
                 <div className="relative">
                   <Input
                     placeholder="••••"
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     {...field}
                   />
                   <button
@@ -152,11 +153,7 @@ export default function RegisterForm() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                   >
-                    {showPassword ? (
-                      <EyeOff size={20} />
-                    ) : (
-                      <Eye size={20} />
-                    )}
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
               </FormControl>
@@ -164,11 +161,11 @@ export default function RegisterForm() {
             </FormItem>
           )}
           rules={{
-            required: 'Password is required',
+            required: "Password is required",
             minLength: {
-              value: 4,
-              message: '4 characters minimum.'
-            }
+              value: 6,
+              message: "6 characters minimum.",
+            },
           }}
         />
 
@@ -183,7 +180,7 @@ export default function RegisterForm() {
                 <div className="relative">
                   <Input
                     placeholder="••••"
-                    type={showConfirmPassword ? 'text' : 'password'}
+                    type={showConfirmPassword ? "text" : "password"}
                     {...field}
                   />
                   <button
@@ -203,11 +200,16 @@ export default function RegisterForm() {
             </FormItem>
           )}
           rules={{
-            required: 'Confirm password is required',
-            validate: (value) =>
-              value === password || 'Passwords do not match'
+            required: "Confirm password is required",
+            validate: (value) => value === password || "Passwords do not match",
           }}
         />
+
+        {errorMessage && (
+          <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-700 text-sm">{errorMessage}</p>
+          </div>
+        )}
 
         {/* Submit Button */}
         <Button
@@ -216,17 +218,20 @@ export default function RegisterForm() {
           className="w-full bg-blue-600 hover:bg-blue-700 text-white"
           size="lg"
         >
-          {isLoading ? 'Creating Account...' : 'Sign Up'}
+          {isLoading ? "Creating Account..." : "Sign Up"}
         </Button>
 
         {/* Login Link */}
         <p className="text-center text-sm text-slate-600">
-          Already have an account?{' '}
-          <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-blue-600 hover:text-blue-700 font-medium"
+          >
             Log in
           </Link>
         </p>
       </form>
     </Form>
-  )
+  );
 }

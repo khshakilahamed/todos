@@ -9,3 +9,8 @@ export type TUser = {
       profile_image?: string;
       bio?: string;
 }
+
+export type TErrorResponse = {
+  status: number;
+  message: string;
+};

@@ -1,4 +1,5 @@
 import config from "@/config";
+import { TErrorResponse } from "@/types";
 import axios from "axios";
 
 // Create a custom axios instance
@@ -34,17 +35,17 @@ axiosInstance.interceptors.response.use(
                         console.warn("Unauthorized! Redirecting to login...");
                         // Example: redirect or clear token
                         localStorage.removeItem("accessToken");
-                        window.location.href = "/login";
+                        // window.location.href = "/login";
                   }
             }
 
-            /* const responseObject: IGenericErrorResponse = {
-                  statusCode: error?.response?.status || 500,
-                  message: error?.response?.data?.message || "Something went wrong",
+            const responseObject: TErrorResponse = {
+                  status: error?.response?.status || 500,
+                  message: error?.response?.data?.detail || "Something went wrong",
             };
-            return Promise.reject(responseObject); */
+            return Promise.reject(responseObject);
 
-            return Promise.reject(error);
+            // return Promise.reject(error);
       }
 );
 
