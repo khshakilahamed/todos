@@ -8,7 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import axiosInstance from "@/lib/axios";
+import { useDeleteTask } from "@/hooks/useTask";
 import { useState } from "react";
 
 interface DeleteTaskDialogProps {
@@ -16,7 +16,6 @@ interface DeleteTaskDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   setDeleteTodoId: (id: number | null) => void;
-  refetch: () => void;
 }
 
 export function DeleteTaskDialog({
@@ -24,24 +23,18 @@ export function DeleteTaskDialog({
   setDeleteTodoId,
   open,
   onOpenChange,
-  refetch,
 }: DeleteTaskDialogProps) {
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState("");
+  
+  const deleteTaskMutation = useDeleteTask();
 
   const handleDeleteTask = async (todoId: number) => {
     setErrorMessage("");
-    setIsDeleting(true);
     try {
-      const { data } = await axiosInstance.delete(`todos/${todoId}/`);
-      console.log("deleted: ", data);
-
-      refetch();
+      await deleteTaskMutation.mutateAsync(todoId);
       onOpenChange(false);
     } catch (error: any) {
-      setErrorMessage(error?.message);
-    } finally {
-      setIsDeleting(false);
+      setErrorMessage(error?.message || "Failed to delete task");
     }
   };
 
@@ -71,9 +64,9 @@ export function DeleteTaskDialog({
                 setDeleteTodoId(null);
               }
             }}
-            disabled={isDeleting}
+            disabled={deleteTaskMutation.isPending}
           >
-            {isDeleting ? "Deleting..." : "Delete"}
+            {deleteTaskMutation.isPending ? "Deleting..." : "Delete"}
           </Button>
           <DialogClose asChild>
             <Button
@@ -81,7 +74,7 @@ export function DeleteTaskDialog({
               variant="secondary"
               className="cursor-pointer"
               onClick={() => setDeleteTodoId(null)}
-              disabled={isDeleting}
+              disabled={deleteTaskMutation.isPending}
             >
               Cancel
             </Button>

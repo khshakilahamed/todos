@@ -10,8 +10,6 @@ import { DeleteTaskDialog } from "./DeleteTaskDialog";
 
 interface TaskCardProps {
   task: TTask;
-  onDelete: (id: string) => void;
-  refetch: () => void;
 }
 
 const priorityConfig = {
@@ -29,7 +27,7 @@ const priorityConfig = {
   },
 };
 
-export function TaskCard({ task, onDelete, refetch }: TaskCardProps) {
+export function TaskCard({ task }: TaskCardProps) {
   const [isOpenDialog, setIsOpenDialog] = useState<boolean>(false);
   const [deleteTodoId, setDeleteTodoId] = useState<number | null>(null);
 
@@ -97,7 +95,6 @@ export function TaskCard({ task, onDelete, refetch }: TaskCardProps) {
         setDeleteTodoId={setDeleteTodoId}
         onOpenChange={setIsOpenDialog}
         open={isOpenDialog}
-        refetch={refetch}
       />
     </div>
   );

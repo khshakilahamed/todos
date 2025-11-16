@@ -4,17 +4,15 @@ import { TaskCard } from "@/app/dashboard/todos/_components/TaskCard";
 import Image from "next/image";
 import { TaskCardSkeleton } from "@/app/dashboard/todos/_components/TaskCardSkeleton";
 import { useTasks } from "@/hooks/useTask";
+import { TTask } from "@/types";
+import NoTask from "./../../../../assets/icon-no projects.png"
 
 type TQuery = {
   search?: string;
 };
 
 const Task = ({ search }: TQuery) => {
-  const { loading, refetch, tasks } = useTasks(search);
-
-  const handleDeleteTask = (id: string) => {
-    //     setTasks(tasks.filter((task) => task?.id && task?.id !== id));
-  };
+  const { loading, tasks } = useTasks(search);
 
   if (loading) {
     return (
@@ -27,12 +25,13 @@ const Task = ({ search }: TQuery) => {
       </div>
     );
   }
+
   return (
     <div>
       {tasks.length === 0 ? (
         <div className="bg-white rounded-lg border border-slate-200 flex flex-col items-center justify-center py-12 md:py-20">
           <div className="text-center px-4">
-            <img src="/placeholder.svg" alt="no project" className="w-16 h-16 mx-auto mb-4" />
+            <Image src={NoTask} alt="no project" />
             <p className="text-lg md:text-2xl text-slate-900">No todos yet</p>
           </div>
         </div>
@@ -42,8 +41,8 @@ const Task = ({ search }: TQuery) => {
             Your Tasks
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {tasks.map((task) => (
-              <TaskCard key={task.id} task={task} onDelete={handleDeleteTask} refetch={refetch} />
+            {tasks.map((task:TTask) => (
+              <TaskCard key={task.id} task={task} />
             ))}
           </div>
         </div>

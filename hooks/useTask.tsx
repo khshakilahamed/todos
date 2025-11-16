@@ -1,45 +1,67 @@
 "use client";
 
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axiosInstance from "@/lib/axios";
 import { TTask } from "@/types";
-import { useState, useEffect, useDeferredValue } from "react";
 
 export function useTasks(search?: string) {
-  const [tasks, setTasks] = useState<TTask[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refetchFlag, setRefetchFlag] = useState(false);
-
-  const deferredSearch = useDeferredValue(search);
-
-  const fetchTasks = async () => {
-    setLoading(true);
-    try {
+  const { data: tasks = [], isLoading: loading } = useQuery({
+    queryKey: ["tasks", search],
+    queryFn: async () => {
       const { data } = await axiosInstance.get("/todos", {
         params: {
-          search: deferredSearch,
+          search,
         },
       });
-
-      setTasks(data.results || []);
-    } catch (error) {
-      console.error("Failed to fetch tasks:", error);
-      setTasks([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch when search changes or when refetchFlag toggles
-  useEffect(() => {
-    fetchTasks();
-  }, [deferredSearch, refetchFlag]);
-
-  // Expose a safe refetch function
-  const refetch = () => setRefetchFlag((prev) => !prev);
+      return data.results || [];
+    },
+  });
 
   return {
     tasks,
     loading,
-    refetch,
   };
+}
+
+export function useDeleteTask() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (taskId: number) => {
+      const { data } = await axiosInstance.delete(`todos/${taskId}/`);
+      return data;
+    },
+    onSuccess: () => {
+      // Automatically invalidates and refetches all tasks queries
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+}
+
+export function useAddTask() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (task: TTask) => {
+      const { data } = await axiosInstance.post("/todos", task);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+}
+
+export function useUpdateTask() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, ...task }: TTask & { id?: number }) => {
+      const { data } = await axiosInstance.patch(`/todos/${id}/`, task);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
 }
