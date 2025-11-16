@@ -15,14 +15,23 @@ export type TErrorResponse = {
   message: string;
 };
 
+export const PRIORITY = {
+  EXTREME: "extreme",
+  MODERATE: "moderate",
+  LOW: "low",
+} as const;
+
+export type TPriority = typeof PRIORITY[keyof typeof PRIORITY];
+
 export type TTask = {
   id?: number;
   title: string;
   description: string;
   is_completed?: boolean;
-  position?: number;
-  priority?: "extreme" | "moderate" | "low";
-  todo_date: string | null;
+  priority?: string;
+  position?: TPriority;
+  todo_date?: string | null;
   created_at?: Date;
   updated_at?: Date;
 };
+

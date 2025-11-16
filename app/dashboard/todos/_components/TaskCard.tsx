@@ -1,18 +1,20 @@
 "use client";
 
-import { Trash2, Edit2, GripVertical } from 'lucide-react';
+import { Trash2, Edit2, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { TTask } from "@/types";
+import { PRIORITY, TPriority, TTask } from "@/types";
 import { useState } from "react";
 import { DeleteTaskDialog } from "./DeleteTaskDialog";
+import { useUpdateTask } from "@/hooks/useTask";
+import { TaskModal } from "./TaskModel";
 
 interface TaskCardProps {
   task: TTask;
 }
 
-const priorityConfig = {
+const priorityConfig: Record<TPriority, { bg: string; badge: string }> = {
   extreme: {
     bg: "bg-red-100",
     badge: "bg-red-100 text-red-700 hover:bg-red-100",
@@ -29,11 +31,31 @@ const priorityConfig = {
 
 export function TaskCard({ task }: TaskCardProps) {
   const [isOpenDialog, setIsOpenDialog] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteTodoId, setDeleteTodoId] = useState<number | null>(null);
 
-  const handleDeleteTodo = async () => {};
+  const [errorMessage, setErrorMessage] = useState("");
+  // const resetRef = useRef<(() => void) | null>(null);
 
-  const config = priorityConfig[task?.priority ?? "moderate"];
+  // const deleteTaskMutation = useDeleteTask();
+  const updateTaskMutation = useUpdateTask();
+
+  const handleAddTask = async (newTask: TTask) => {
+    // console.log(newTask);
+    setErrorMessage("");
+    try {
+      const result = await updateTaskMutation.mutateAsync(newTask);
+      // resetRef.current?.();
+      setIsModalOpen(false);
+      setErrorMessage("");
+    } catch (error: any) {
+      setErrorMessage(error?.message);
+    }
+  };
+
+  // const config = priorityConfig[task?.priority ?? "moderate"];
+  const config =
+    priorityConfig[(task.priority ?? PRIORITY.MODERATE) as TPriority];
 
   return (
     <div className="bg-white rounded-lg border p-6 hover:shadow-lg transition-all duration-200">
@@ -70,6 +92,7 @@ export function TaskCard({ task }: TaskCardProps) {
             variant="ghost"
             size="sm"
             className="h-8 px-2 bg-blue-50 text-blue-600 hover:bg-blue-150 hover:text-blue-700 cursor-pointer"
+            onClick={() => setIsModalOpen(true)}
           >
             <Edit2 className="w-4 h-4" />
           </Button>
@@ -88,6 +111,18 @@ export function TaskCard({ task }: TaskCardProps) {
           </Button>
         </div>
       </div>
+
+      {/* Update Task */}
+      <TaskModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        mode="edit"
+        initialData={task}
+        onSubmitTask={handleAddTask}
+        loading={updateTaskMutation?.isPending}
+        errorMessage={errorMessage}
+        // resetRef={resetRef}
+      />
 
       {/* Delete Dialog */}
       <DeleteTaskDialog

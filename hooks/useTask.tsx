@@ -43,7 +43,7 @@ export function useAddTask() {
 
   return useMutation({
     mutationFn: async (task: TTask) => {
-      const { data } = await axiosInstance.post("/todos", task);
+      const { data } = await axiosInstance.post("/todos/", task);
       return data;
     },
     onSuccess: () => {

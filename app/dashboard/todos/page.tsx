@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Search, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,13 +8,28 @@ import { Label } from "@/components/ui/label";
 import Task from "./_components/Task";
 import { TaskModal } from "@/app/dashboard/todos/_components/TaskModel";
 import { TTask } from "@/types";
+import { useAddTask } from "@/hooks/useTask";
 
 export default function TodosPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const resetRef = useRef<(() => void) | null>(null);
 
-  const handleAddTask = (newTask: TTask) => {
-    setIsModalOpen(false);
+  // const deleteTaskMutation = useDeleteTask();
+  const addTaskMutation = useAddTask();
+
+  const handleAddTask = async (newTask: TTask) => {
+    // console.log(newTask);
+    setErrorMessage("")
+    try {
+      const result = await addTaskMutation.mutateAsync(newTask);
+      resetRef.current?.();
+      setIsModalOpen(false);
+      setErrorMessage("")
+    } catch (error: any) {
+      setErrorMessage(error?.message);
+    }
   };
 
   return (
@@ -63,6 +78,9 @@ export default function TodosPage() {
         onOpenChange={setIsModalOpen}
         mode="add"
         onSubmitTask={handleAddTask}
+        loading={addTaskMutation?.isPending}
+        errorMessage={errorMessage}
+        resetRef={resetRef}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { Trash2 } from 'lucide-react';
+import { Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -20,14 +20,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TTask } from "@/types";
+import { PRIORITY, TTask } from "@/types";
+import { useEffect } from "react";
 
 interface TaskModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialData?: TTask;
   mode?: "add" | "edit";
+  // onSubmitTask: (task: TTask) => void;
   onSubmitTask: (task: TTask) => void;
+  loading: boolean;
+  errorMessage: string;
+  resetRef?: React.RefObject<(() => void) | null>;
 }
 
 export function TaskModal({
@@ -36,25 +41,43 @@ export function TaskModal({
   initialData,
   mode = "add",
   onSubmitTask,
+  loading,
+  errorMessage,
+  resetRef,
 }: TaskModalProps) {
   const form = useForm<TTask>({
     defaultValues: initialData || {
       title: "",
       todo_date: "",
-      priority: "moderate",
+      priority: "",
       description: "",
     },
   });
 
-  const handleSubmit = (data: TTask) => {
+  useEffect(() => {
+    if (resetRef) {
+      resetRef.current = () => form.reset();
+    }
+  }, [resetRef, form]);
+
+  const handleSubmit = async (data: TTask) => {
     const task = {
       ...data,
       id: initialData?.id,
-      todo_date: data.todo_date || "No due date",
+      todo_date: data.todo_date,
     };
+
+    if (!task.todo_date) {
+      delete task["todo_date"];
+    }
+    if (!task.id) {
+      delete task["id"];
+    }
+    if (!task.priority) {
+      delete task["priority"];
+    }
+    // form.reset();
     onSubmitTask(task);
-    form.reset();
-    onOpenChange(false);
   };
 
   return (
@@ -86,6 +109,9 @@ export function TaskModal({
             <FormField
               control={form.control}
               name="title"
+              rules={{
+                required: mode === "add" ? "Title is required" : false,
+              }}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-slate-900 font-semibold text-sm">
@@ -133,7 +159,7 @@ export function TaskModal({
                     Priority
                   </FormLabel>
                   <div className="flex items-center gap-6">
-                    {["Extreme", "Moderate", "Low"].map((level) => (
+                    {Object.values(PRIORITY).map((level) => (
                       <div key={level} className="flex items-center gap-2">
                         <Label
                           htmlFor={level.toLowerCase()}
@@ -141,9 +167,9 @@ export function TaskModal({
                         >
                           <span
                             className={`w-2 h-2 rounded-full ${
-                              level === "Extreme"
+                              level === PRIORITY.EXTREME
                                 ? "bg-red-500"
-                                : level === "Moderate"
+                                : level === PRIORITY.MODERATE
                                 ? "bg-green-500"
                                 : "bg-yellow-500"
                             }`}
@@ -152,7 +178,7 @@ export function TaskModal({
                         </Label>
                         <Checkbox
                           id={level.toLowerCase()}
-                          checked={field.value === level}
+                          checked={field?.value === level}
                           onCheckedChange={() => field.onChange(level)}
                         />
                       </div>
@@ -166,6 +192,9 @@ export function TaskModal({
             <FormField
               control={form.control}
               name="description"
+              rules={{
+                required: mode === "add" ? "Description is required" : false,
+              }}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-slate-900 font-semibold text-sm">
@@ -182,16 +211,26 @@ export function TaskModal({
               )}
             />
 
+            {errorMessage && (
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                <p className="text-red-700 text-sm">{errorMessage}</p>
+              </div>
+            )}
+
             {/* Buttons */}
             <div className="flex items-center justify-between gap-3 pt-4">
-              <Button type="submit">
+              <Button type="submit" disabled={loading}>
                 {mode === "add" ? "Add Task" : "Update Task"}
               </Button>
               <Button
                 type="button"
                 size="icon"
                 className="w-10 h-10 bg-red-600 hover:bg-red-700 text-white rounded-lg"
-                onClick={() => onOpenChange(false)}
+                onClick={() => {
+                  onOpenChange(false);
+                  form.reset();
+                }}
+                disabled={loading}
               >
                 <Trash2 className="w-5 h-5" />
               </Button>
