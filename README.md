@@ -29,3 +29,4 @@ You must implement the following pages according to the design:
 - Zod (Form Validation)
 - date-fnd (To handle date)
 - dnd kit (For drag & drop the task card)
+- Tanstack query (State management & data fetching)
