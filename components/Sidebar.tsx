@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { CheckSquare2, User, LogOut, X, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,12 @@ const navItems = [
 export function Sidebar({ onClose }: SidebarProps) {
   const pathname = usePathname();
   const { isLoading, user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/login");
+  };
 
   return (
     <div className="w-56 sm:w-80 md:w-64 lg:w-80 bg-[#0D224A] text-white flex flex-col h-screen py-5 overflow-y-auto">
@@ -40,7 +46,11 @@ export function Sidebar({ onClose }: SidebarProps) {
       <div className="p-4 md:p-6">
         <div className="flex flex-col items-center text-center">
           <Avatar className="w-20 md:w-24 h-20 md:h-24 mb-4">
-            <AvatarImage src={user?.profile_image} alt="User avatar" className=""/>
+            <AvatarImage
+              src={user?.profile_image}
+              alt="User avatar"
+              className=""
+            />
             <AvatarFallback className="bg-slate-700">AM</AvatarFallback>
           </Avatar>
           {!isLoading ? (
@@ -86,7 +96,7 @@ export function Sidebar({ onClose }: SidebarProps) {
       <div className="mb-4">
         <Label
           className="w-full flex items-center justify-start gap-3 text-slate-400 hover:text-white hover:bg-slate-800 text-sm md:text-base rounded-none cursor-pointer py-3 px-6"
-          onClick={logout}
+          onClick={handleLogout}
         >
           <LogOut className="w-5 h-5 shrink-0" />
           <span>Logout</span>

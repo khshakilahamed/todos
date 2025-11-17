@@ -48,12 +48,16 @@ export default function LoginForm() {
     try {
       const result = await axiosInstance.post("/auth/login/", payload);
 
-      const refresh = result?.data?.refresh;
       const access = result?.data?.access;
+      const refresh = result?.data?.refresh;
 
-      storeData(refresh, access);
+      // console.log("access: ", access);
+      // console.log("refresh: ", refresh);
+
+      storeData(access, refresh);
       form.reset();
       toast.success("Login successful!");
+      
       router.push("/dashboard");
     } catch (error: any) {
       console.error("Login error:", error);

@@ -1,9 +1,10 @@
 "use client";
 
+import { AUTH_KEYS } from "@/constants";
 import { AuthContext } from "@/contexts/AuthContext";
 import axiosInstance from "@/lib/axios";
 import { TUser } from "@/types";
-import { useRouter } from "next/navigation";
+import axios from "axios";
 import { useEffect, useState, type ReactNode } from "react";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -11,13 +12,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
-  const router = useRouter();
 
   // Load tokens and user on first render
   useEffect(() => {
-    const storedAccessToken = localStorage.getItem("accessToken");
-    const storedRefreshToken = localStorage.getItem("refreshToken");
-    const userInfo = localStorage.getItem("user");
+    const storedAccessToken = localStorage.getItem(AUTH_KEYS.ACCESS_TOKEN);
+    const storedRefreshToken = localStorage.getItem(AUTH_KEYS.REFRESH_TOKEN);
+    const userInfo = localStorage.getItem(AUTH_KEYS.USER);
 
     if (userInfo && storedAccessToken && storedRefreshToken) {
       setAccessToken(storedAccessToken);
@@ -51,10 +51,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setAccessToken(accessToken);
     setRefreshToken(refreshToken);
 
-    localStorage.setItem("accessToken", refreshToken);
-    localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem(AUTH_KEYS.ACCESS_TOKEN, accessToken);
+    localStorage.setItem(AUTH_KEYS.REFRESH_TOKEN, refreshToken);
 
-    fetchProfile()
+    await axios.post("/api/auth/set-cookie", { accessToken: accessToken });
+
+    fetchProfile();
   };
 
   const refetchUserInfo = (userInfo?: TUser) => {
@@ -67,15 +69,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Logout
-  const logout = () => {
-    setAccessToken(null);
-    setRefreshToken(null);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await axios.post("/api/auth/remove-cookie");
 
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("user");
-    router.push("/login");
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUser(null);
+
+      localStorage.removeItem(AUTH_KEYS.ACCESS_TOKEN);
+      localStorage.removeItem(AUTH_KEYS.REFRESH_TOKEN);
+      localStorage.removeItem(AUTH_KEYS.USER);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

@@ -1,3 +1,5 @@
+import { PRIORITY } from "@/constants";
+
 export type TUser = {
   id: number;
   email: string;
@@ -14,12 +16,6 @@ export type TErrorResponse = {
   status: number;
   message: string;
 };
-
-export const PRIORITY = {
-  EXTREME: "extreme",
-  MODERATE: "moderate",
-  LOW: "low",
-} as const;
 
 export type TPriority = typeof PRIORITY[keyof typeof PRIORITY];
 

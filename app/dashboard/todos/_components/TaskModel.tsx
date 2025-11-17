@@ -20,8 +20,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { PRIORITY, TTask } from "@/types";
 import { useEffect } from "react";
+import { PRIORITY } from "@/constants";
+import { TTask } from "@/types";
 
 interface TaskModalProps {
   open: boolean;
@@ -158,7 +159,7 @@ export function TaskModal({
                   <FormLabel className="text-slate-900 font-semibold text-sm mb-3">
                     Priority
                   </FormLabel>
-                  <div className="flex items-center gap-6">
+                  <div className="flex flex-wrap items-center gap-6">
                     {Object.values(PRIORITY).map((level) => (
                       <div key={level} className="flex items-center gap-2">
                         <Label

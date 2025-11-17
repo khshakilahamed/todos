@@ -1,4 +1,5 @@
 import config from "@/config";
+import { AUTH_KEYS } from "@/constants";
 import { TErrorResponse } from "@/types";
 import axios from "axios";
 
@@ -11,7 +12,7 @@ const axiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
       (config) => {
-            const token = localStorage.getItem("accessToken");
+            const token = localStorage.getItem(AUTH_KEYS.ACCESS_TOKEN);
 
             if (token) {
                   config.headers.Authorization = `Bearer ${token}`;
@@ -34,7 +35,7 @@ axiosInstance.interceptors.response.use(
                   if (error.response.status === 401) {
                         console.warn("Unauthorized! Redirecting to login...");
                         // Example: redirect or clear token
-                        localStorage.removeItem("accessToken");
+                        // localStorage.removeItem("accessToken");
                         // window.location.href = "/login";
                   }
             }

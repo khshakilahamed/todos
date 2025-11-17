@@ -1,15 +1,21 @@
-'use client'
+"use client";
 
-import { ReactNode, useState } from 'react'
-import { Sidebar } from '@/components/Sidebar'
-import { DashboardHeader } from '@/components/DashboardHeader'
+import { ReactNode, useEffect, useState } from "react";
+import { Sidebar } from "@/components/Sidebar";
+import { DashboardHeader } from "@/components/DashboardHeader";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: ReactNode
-}) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  /* useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+    }
+  }, []); */
 
   return (
     <div className="flex h-screen bg-background">
@@ -45,5 +51,5 @@ export default function DashboardLayout({
         </main>
       </div>
     </div>
-  )
+  );
 }

@@ -4,13 +4,14 @@ import { Trash2, Edit2, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cardDateFormat, cn } from "@/lib/utils";
-import { PRIORITY, TPriority, TTask } from "@/types";
+import { TPriority, TTask } from "@/types";
 import { useState } from "react";
 import { DeleteTaskDialog } from "./DeleteTaskDialog";
 import { useUpdateTask } from "@/hooks/useTask";
 import { TaskModal } from "./TaskModel";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { PRIORITY } from "@/constants";
 
 interface TaskCardProps {
   task: TTask;
