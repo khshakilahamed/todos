@@ -4,7 +4,7 @@ The task is to build a Todo Web Application using Next.js and TypeScript, with t
 ### Important Links
 - Live Site Link: [https://todo-psi-lake-62.vercel.app]
 - Backend API Domain: [https://todo-app.pioneeralpha.com]
-- Postman Collection: [resources/todo_postman_collection.json]
+- Postman Collection: [resources/todo_postman_collection.json](resources/todo_postman_collection.json)
 - Github Repository: [https://github.com/khshakilahamed/todos]
 
 ### Pages to Develop
