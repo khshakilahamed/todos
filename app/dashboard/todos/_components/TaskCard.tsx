@@ -123,7 +123,7 @@ export function TaskCard({ task }: TaskCardProps) {
       {/* Footer */}
       <div className="flex items-center justify-between pt-4">
         {/* <p className="text-slate-500">{task.todo_date ? `Due ${task.todo_date}` : ""}</p> */}
-        <p className="text-slate-500">{task.todo_date ? `Due ${cardDateFormat(task.todo_date)}` : ""}</p>
+        <p className="text-slate-500">{task?.todo_date ? `Due ${cardDateFormat(task.todo_date)}` : ""}</p>
         <div className="flex gap-2">
           <Button
             variant="ghost"

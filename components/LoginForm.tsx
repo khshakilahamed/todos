@@ -54,7 +54,7 @@ export default function LoginForm() {
       // console.log("access: ", access);
       // console.log("refresh: ", refresh);
 
-      storeData(access, refresh);
+      await storeData(access, refresh);
       form.reset();
       toast.success("Login successful!");
       

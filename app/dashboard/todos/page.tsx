@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,22 @@ import Task from "./_components/Task";
 import { TaskModal } from "@/app/dashboard/todos/_components/TaskModel";
 import { TTask } from "@/types";
 import { useAddTask } from "@/hooks/useTask";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const filterItems = [
+  { id: 1, label: "Deadline Today", value: "today" },
+  { id: 2, label: "Expires in 5 days", value: "5days" },
+  { id: 4, label: "Expires in 10 days", value: "10days" },
+  { id: 5, label: "Expires in 30 days", value: "30days" },
+];
 
 export default function TodosPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,12 +37,12 @@ export default function TodosPage() {
 
   const handleAddTask = async (newTask: TTask) => {
     // console.log(newTask);
-    setErrorMessage("")
+    setErrorMessage("");
     try {
       const result = await addTaskMutation.mutateAsync(newTask);
       resetRef.current?.();
       setIsModalOpen(false);
-      setErrorMessage("")
+      setErrorMessage("");
     } catch (error: any) {
       setErrorMessage(error?.message);
     }
@@ -50,7 +66,7 @@ export default function TodosPage() {
       </div>
 
       {/* Search */}
-      <div className="mb-6 flex gap-3 items-center">
+      <div className="mb-6 flex flex-wrap gap-3 items-center">
         <div className="relative flex-1">
           <Input
             id="search"
@@ -58,15 +74,28 @@ export default function TodosPage() {
             placeholder="Search your task..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-4 pr-10 bg-white"
+            className="pl-4 pr-10 bg-white min-w-[200px]"
           />
           <Label
             htmlFor="search"
-            className="absolute right-0 top-1/2 -translate-y-1/2 h-full px-3 text-white bg-primary cursor-pointer"
+            className="absolute hidden sm:flex right-0 top-1/2 -translate-y-1/2 h-full px-3 text-white bg-primary cursor-pointer rounded-lg"
           >
             <Search />
           </Label>
         </div>
+        <Select>
+          <SelectTrigger className="bg-white min-w-[180px]" icon={<ArrowUpDown/>}>
+            <SelectValue placeholder="Sort by" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Date</SelectLabel>
+              {filterItems?.map((item) => (
+                <SelectItem key={item?.id} value={item?.value ?? ""}>{item?.label}</SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Server Component */}

@@ -112,6 +112,7 @@ const ProfilePhoto = () => {
                 className="absolute bottom-0 right-0 bg-destructive text-white rounded-lg 
                  hover:bg-destructive/85 transition-colors shadow-lg cursor-pointer"
                 onClick={onCancelFileUpload}
+                disabled={isFileUploading}
               >
                 <Trash className="w-3 h-3 md:w-4 md:h-4" />
               </Button>
@@ -128,7 +129,7 @@ const ProfilePhoto = () => {
 
           <Button
             className="text-sm md:text-base w-full sm:w-auto cursor-pointer"
-            disabled={!preview || !file}
+            disabled={!preview || !file || isFileUploading}
             onClick={handleUploadProfilePhoto}
           >
             <Upload className="w-3 h-3 md:w-4 md:h-4" />

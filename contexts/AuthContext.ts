@@ -7,7 +7,7 @@ interface AuthContextType {
   user: TUser | null,
   isAuthenticated: boolean;
   isLoading: boolean;
-  storeData: (accessToken: string, refreshToken: string) => void;
+  storeData: (accessToken: string, refreshToken: string) => Promise<void>;
   logout: () => Promise<void>;
   refetchUserInfo: (userInfo?: TUser) => void;
 }

@@ -77,6 +77,8 @@ export function TaskModal({
     if (!task.priority) {
       delete task["priority"];
     }
+
+    console.log("task.todo_date: ", task.todo_date);
     // form.reset();
     onSubmitTask(task);
   };

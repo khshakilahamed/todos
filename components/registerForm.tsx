@@ -19,8 +19,8 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 interface RegisterFormData {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -31,8 +31,8 @@ export default function RegisterForm() {
   const form = useForm<RegisterFormData>({
     mode: "onBlur",
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      first_name: "",
+      last_name: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -71,7 +71,7 @@ export default function RegisterForm() {
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="firstName"
+            name="first_name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-900">First Name</FormLabel>
@@ -92,7 +92,7 @@ export default function RegisterForm() {
 
           <FormField
             control={form.control}
-            name="lastName"
+            name="last_name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-slate-900">Last Name</FormLabel>

@@ -12,7 +12,7 @@ export async function proxy(request: NextRequest) {
 
       // If no access token, redirect to login
       if (!accessToken) {
-            if (pathname === "/login") {
+            if (pathname === "/login" || pathname === "/register") {
                   return NextResponse.next();
             } else {
                   return NextResponse.redirect(new URL("/login", request.url));
