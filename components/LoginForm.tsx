@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import axiosInstance from "@/lib/axios";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -57,8 +57,10 @@ export default function LoginForm() {
       await storeData(access, refresh);
       form.reset();
       toast.success("Login successful!");
-      
-      router.push("/dashboard");
+
+      // router.push("/dashboard");
+      router.replace("/dashboard");
+      router.refresh();
     } catch (error: any) {
       console.error("Login error:", error);
       setErrorMessage(error?.message);

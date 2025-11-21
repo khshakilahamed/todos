@@ -2,6 +2,7 @@
 
 import { AUTH_KEYS } from "@/constants";
 import { AuthContext } from "@/contexts/AuthContext";
+import { loginAction, logoutAction } from "@/lib/authActions";
 import axiosInstance from "@/lib/axios";
 import { TUser } from "@/types";
 import axios from "axios";
@@ -54,7 +55,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem(AUTH_KEYS.ACCESS_TOKEN, accessToken);
     localStorage.setItem(AUTH_KEYS.REFRESH_TOKEN, refreshToken);
 
-    await axios.post("/api/auth/set-cookie", { accessToken: accessToken });
+    // await axios.post("/api/auth/set-cookie", { accessToken: accessToken });
+
+    await loginAction(accessToken);
 
     fetchProfile();
   };
@@ -71,7 +74,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Logout
   const logout = async () => {
     try {
-      await axios.post("/api/auth/remove-cookie");
+      // await axios.post("/api/auth/remove-cookie");
+      await logoutAction();
 
       setAccessToken(null);
       setRefreshToken(null);
